@@ -40,7 +40,8 @@ class TextGenerator:
     def train(self, iteration=100, lr=1e-3):
         self.print_model_parameter()
         optimizer = torch.optim.AdamW(self.model.parameters(), lr=lr)
-        for it in range(iteration):
+        from tqdm import tqdm
+        for it in tqdm(range(iteration)):
             if it % self.eval_interval == 0 or it == iteration - 1:
                 loss = self.estimate_loss()
                 print(f"it = {it:05d}, train_loss={loss['train']:.4f}, eval_loss={loss['val']:.4f}")
