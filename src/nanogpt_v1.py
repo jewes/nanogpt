@@ -29,7 +29,7 @@ class NanoGptV1(nn.Module):
         # idx: a batch of tokens (integers)
         B, T = idx.shape
         tok_embedding = self.token_embedding_table(idx)
-        pos_embedding = self.position_embedding_token(torch.arange(0, T))
+        pos_embedding = self.position_embedding_token(torch.arange(0, T, device=device))
         x = tok_embedding + pos_embedding
         x = self.head(x)
         logits = self.lm_head(x)

@@ -2,6 +2,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 torch.manual_seed(1337)
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 class BigramModel(nn.Module):
@@ -54,7 +55,7 @@ if __name__ == "__main__":
     from text_gen import load_dataset_and_tokenizer, TextGenerator
 
     dataset, tokenizer = load_dataset_and_tokenizer()
-    bigram_model = BigramModel(tokenizer.vocab_size)
+    bigram_model = BigramModel(tokenizer.vocab_size).to(device)
     batch_size = 4
     block_size = 8
     text_generator = TextGenerator(bigram_model, tokenizer, dataset, batch_size=batch_size, block_size=block_size)
