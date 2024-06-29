@@ -27,6 +27,16 @@ class NanoGptV2(nn.Module):
         self.ln_f = nn.LayerNorm(n_embed)
         self.lm_head = nn.Linear(n_embed, vocab_size)
 
+        self.apply(self._init_weights)
+
+    def _init_weights(self, module):
+        if isinstance(module, nn.Linear):
+            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
+            if module.bias is not None:
+                torch.nn.init.zeros_(module.bias)
+        elif isinstance(module, nn.Embedding):
+            torch.nn.init.normal_(module.weight, mean=0.0, std=0.02)
+
     def forward(self, idx, target=None):
         # idx: a batch of tokens (integers)
         B, T = idx.shape
@@ -80,12 +90,21 @@ if __name__ == '__main__':
     from text_gen import load_dataset_and_tokenizer, TextGenerator
 
     dataset, tokenizer = load_dataset_and_tokenizer()
-    n_embed = 32
-    n_layer = 4
-    n_head = 4
-    batch_size = 4
-    block_size = 8
-    dropout = 0.2
+    small = True
+    if small:
+        n_embed = 32
+        n_layer = 4
+        n_head = 4
+        batch_size = 4
+        block_size = 8
+        dropout = 0.0
+    else:
+        n_embed = 384
+        n_layer = 6
+        n_head = 6
+        batch_size = 64
+        block_size = 256
+        dropout = 0.2
     nano_gpt_v2 = NanoGptV2(vocab_size=tokenizer.vocab_size,
                             n_layer=n_layer,
                             n_embed=n_embed,
